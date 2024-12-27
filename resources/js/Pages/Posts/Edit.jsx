@@ -1,10 +1,19 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { route } from "../../../../vendor/tightenco/ziggy/src/js";
 import { router } from "@inertiajs/react";
+import { RxCross2 } from "react-icons/rx";
+import Alert from "@mui/material/Alert";
+import IconButton from "@mui/material/IconButton";
+import Collapse from "@mui/material/Collapse";
+import CloseIcon from "@mui/icons-material/Close";
 
-export default function CreatePost() {
+export default function Edit({ post }) {
+    const [flashMessage, setFlashMessage] = useState(null);
+    const [open, setOpen] = useState(false);
+
     const [values, setValues] = useState({
-        title: "",
-        description: "",
+        title: post.title,
+        description: post.description,
     });
 
     const [errors, setErrors] = useState({});
@@ -39,22 +48,43 @@ export default function CreatePost() {
         }
 
         // Submit the form data using Inertia's post method
-        router.post("/posts", values);
-
-        // Reset form and errors after submission
-        setValues({
-            title: "",
-            description: "",
+        router.put(route("posts.update", { post: post.id }), values, {
+            onSuccess: () => {
+                setFlashMessage("Post Updated successfully!!");
+                setOpen(true);
+            },
         });
-        setErrors({});
     }
-
     return (
         <div className="px-5 mx-auto lg:w-5/6">
             <h1 className="text-xl font-semibold mb-4 text-center mt-5">
-                Create a New Post
+                Edit Post
             </h1>
-            <form onSubmit={handleSubmit} className="flex flex-col border p-5 shadow-md">
+            {flashMessage && (
+                <Collapse in={open}>
+                    <Alert
+                        action={
+                            <IconButton
+                                aria-label="close"
+                                color="inherit"
+                                size="small"
+                                onClick={() => {
+                                    setOpen(false);
+                                }}
+                            >
+                                <CloseIcon fontSize="inherit" />
+                            </IconButton>
+                        }
+                        sx={{ mb: 2 }}
+                    >
+                        {flashMessage}
+                    </Alert>
+                </Collapse>
+            )}
+            <form
+                onSubmit={handleSubmit}
+                className="flex flex-col border p-5 shadow-md"
+            >
                 {/* Title Field */}
                 <label htmlFor="title" className="mb-1 text-sm font-medium">
                     Title
@@ -89,7 +119,7 @@ export default function CreatePost() {
                             : "border-gray-300"
                     }`}
                     placeholder="Enter post description"
-                    rows="4"
+                    rows="10"
                 />
                 {errors.description && (
                     <span className="text-red-500 mb-4">

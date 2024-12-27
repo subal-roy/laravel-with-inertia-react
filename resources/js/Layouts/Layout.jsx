@@ -1,19 +1,39 @@
+import React from "react";
 import { Link } from "@inertiajs/react";
+import { AppBar, Toolbar, Button, Container, Box } from "@mui/material";
 
-export default function Layout({children}) {
+export default function Layout({ children }) {
     return (
         <>
-            <header>
-                <div className="bg-gray-300 p-4 flex justify-center space-x-5 text-xl">
-                    <Link className="nav-link" href="/">
-                        Home
-                    </Link>
-                    <Link className="nav-link" href="/posts">
-                        Posts
-                    </Link>
-                </div>
-            </header>
-            <main>{children}</main>
+            {/* AppBar for the header */}
+            <AppBar position="sticky">
+                <Toolbar>
+                    <Box
+                        display="flex"
+                        justifyContent="space-between"
+                        width="100%"
+                    >
+                        <Box>
+                            {/* Logo or branding */}
+                            <Button color="inherit" component={Link} href="/">
+                                Home
+                            </Button>
+                            <Button
+                                color="inherit"
+                                component={Link}
+                                href="/posts"
+                            >
+                                Posts
+                            </Button>
+                        </Box>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+
+            {/* Main content */}
+            <Container>
+                <main>{children}</main>
+            </Container>
         </>
     );
 }

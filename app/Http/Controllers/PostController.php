@@ -43,7 +43,8 @@ class PostController extends Controller
         $posts = Post::latest()->paginate(5);
 
         return Inertia::render('Posts/Index', [
-            'posts' => $posts
+            'posts' => $posts,
+            'message' => 'New Post created successfully!!'
         ]);
     }
 
@@ -62,7 +63,9 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return Inertia::render('Posts/Edit', [
+            'post' => $post
+        ]);
     }
 
     /**
@@ -70,7 +73,10 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        //
+        $post->update($request->validated());
+
+        return redirect()->route('posts.edit', ['post' => $post->id])
+            ->with('message', 'Post updated successfully');
     }
 
     /**
@@ -80,7 +86,8 @@ class PostController extends Controller
     {
         $post->delete();
         return redirect('/posts')->with(
-            'message', 'Post deleted successfully'
+            'message',
+            'Post deleted successfully'
         );
     }
 }

@@ -2,32 +2,85 @@ import React, { useState } from "react";
 import Pagination from "../../Components/Pagination";
 import { Link, usePage, Head } from "@inertiajs/react";
 import { useRoute } from "../../../../vendor/tightenco/ziggy";
+import { FiEdit } from "react-icons/fi";
+import { Alert, Collapse, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import ReactTimeago from "react-timeago";
 
-export default function Posts({ posts }) {
+export default function Posts({ posts, message }) {
     const route = useRoute();
     const { flash } = usePage().props;
+    const [open, setOpen] = useState(true);
 
-    const [flasMessage, setFlashMessage] = useState(flash.message);
-
-    setTimeout(() => {
-        setFlashMessage(null);
-    }, 2000);
+    const [flashMessage, setFlashMessage] = useState(flash.message);
+    const [createMessage, setCreateMessage] = useState(message);
+    console.log(flash);
 
     return (
-        
-        <div className="my-4 mx-auto w-3/5 xl:w-1/2">
-            <Head><title>Posts</title></Head>
+        <div className="my-4 mx-auto lg:w-5/6">
+            <Head>
+                <title>Posts</title>
+            </Head>
             <div className="mx-4 flex justify-between items-center">
-                <h1 className="font-semibold">Welcome to post page...</h1>
+                <h1 className="font-semibold text-xl">
+                    Welcome to post page...
+                </h1>
                 <Link
                     href="/posts/create"
-                    className="bg-blue-700 text-white px-4 py-1 rounded-md hover:bg-blue-500"
+                    className="bg-blue-500 px-2 py-1 rounded-sm font-semibold text-white hover:bg-blue-700 flex items-center gap-1"
                 >
+                    <FiEdit />
                     New Post
                 </Link>
             </div>
-            {flasMessage && (
-                <div className="mt-5 bg-red-500 text-white text-center py-1 rounded-sm">{flasMessage}</div>
+            {createMessage && (
+                <Collapse in={open}>
+                    <Alert
+                        action={
+                            <IconButton
+                                aria-label="close"
+                                color="inherit"
+                                size="small"
+                                onClick={() => {
+                                    setOpen(false);
+                                    setCreateMessage(null);
+                                }}
+                            >
+                                <CloseIcon fontSize="inherit" />
+                            </IconButton>
+                        }
+                        sx={{ mt: 2 }}
+                    >
+                        {createMessage}
+                    </Alert>
+                </Collapse>
+                // <div className="mt-5 bg-red-200 text-red-700 text-center py-2 rounded-sm">
+                //     {flashMessage}
+                // </div>
+            )}
+            {flashMessage && (
+                <Collapse in={open}>
+                    <Alert
+                        severity="success"
+                        color="error"
+                        action={
+                            <IconButton
+                                aria-label="close"
+                                color="error"
+                                size="small"
+                                onClick={() => {
+                                    setOpen(false);
+                                    setFlashMessage(null);
+                                }}
+                            >
+                                <CloseIcon fontSize="inherit" />
+                            </IconButton>
+                        }
+                        sx={{ mt: 2 }}
+                    >
+                        {flashMessage}
+                    </Alert>
+                </Collapse>
             )}
 
             <div>
@@ -38,10 +91,10 @@ export default function Posts({ posts }) {
                     >
                         <div className="flex justify-between">
                             <h1 className="font-bold">Title: {post.title}</h1>
-                            <span className="text-gray-600">
-                                Posted on:
-                                {new Date(post.created_at).toLocaleTimeString()}
-                            </span>
+                            <h1 className="text-gray-600">
+                                Posted on:{" "}
+                                <ReactTimeago date={post.created_at} />
+                            </h1>
                         </div>
 
                         <p>
